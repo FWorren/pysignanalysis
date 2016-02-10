@@ -25,7 +25,7 @@ def emd(x, max_modes=5):
 
 def sift_process(residue):
     mode = residue
-    max_siftings = 50
+    max_siftings = 200
     n_siftings = 0
 
     while n_siftings < max_siftings:

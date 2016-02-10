@@ -3,7 +3,7 @@ import scipy.signal as signal
 import scipy.interpolate as interpolate
 
 
-def emd(x, max_modes=5):
+def emd(x, max_modes=10):
     imfs = np.ndarray((max_modes+1, len(x)))
     n = 0
     residue = x

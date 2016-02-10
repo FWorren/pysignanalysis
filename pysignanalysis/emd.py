@@ -25,14 +25,14 @@ def emd(x, max_modes=5):
 
 def sift_process(residue):
     mode = residue
-    max_siftings = 25
+    max_siftings = 100
     n_siftings = 0
 
     while n_siftings < max_siftings - 1:
         mode = sift_one(mode)
         extrema, zero_crossings, mean = analyze_mode(mode)
         n_siftings += 1
-        if abs(extrema - zero_crossings) <= 1 and -0.1 <= mean <= 0.1:
+        if abs(extrema - zero_crossings) <= 1 and -0.001 <= mean <= 0.001:
             break
 
     return mode

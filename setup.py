@@ -12,7 +12,7 @@ config = {
     'download_url': 'https://github.com/FWorren/pysignanalysis',
     'author_email': 'freworr@gmail.com',
     'version': '0.1',
-    'install_requires': ['nose'],
+    'install_requires': ['nose', 'scipy', 'numpy', 'matplotlib'],
     'packages': [NAME],
     'scripts': [],
     'name': NAME

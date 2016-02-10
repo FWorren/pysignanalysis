@@ -34,7 +34,7 @@ def sift_process(residue):
         n_siftings += 1
         if abs(extrema - zero_crossings) <= 1 and -0.01 <= mean <= 0.01:
             break
-
+    print(n_siftings)
     return mode
 
 

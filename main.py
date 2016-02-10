@@ -19,7 +19,7 @@ if __name__ == '__main__':
     omega_3 = 5.0 * 2.0 * np.pi
     time_ax = np.linspace(0, end_time, end_time * sample_freq)
     sine_wave = a_0 * np.sin(omega_0 * time_ax) + \
-                a_1 * np.sin(omega_1 * time_ax + a_2 * np.sin(omega_2 * time_ax)) + \
+                a_1 * np.sin(omega_1 * time_ax) + \
                 a_2 * np.sin(omega_2 * time_ax) + \
                 a_3 * np.sin(omega_3 * time_ax)
 

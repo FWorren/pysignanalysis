@@ -11,8 +11,8 @@ if __name__ == '__main__':
     sample_freq = 2000
     a_0 = 100
     a_1 = 50
-    a_2 = 10
-    a_3 = 1
+    a_2 = 15
+    a_3 = 10
     omega_0 = 150.0 * 2.0 * np.pi
     omega_1 = 80.0 * 2.0 * np.pi
     omega_2 = 15.0 * 2.0 * np.pi
@@ -29,6 +29,6 @@ if __name__ == '__main__':
     start = time.time()
     imfs_2 = emdlib.emd(sine_wave, max_modes)
     print "Process time library: %d", time.time() - start
-    plotter.plot_intrinsic_mode_functions(imfs, time_ax, 'Developed EMD', plt)
-    plotter.plot_intrinsic_mode_functions(imfs_2, time_ax, 'Library EMD', plt)
+    plotter.plot_intrinsic_mode_functions(sample_freq, imfs, 'Developed EMD', plt)
+    plotter.plot_intrinsic_mode_functions(sample_freq, imfs_2, 'Library EMD', plt)
     plt.show()

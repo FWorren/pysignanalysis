@@ -4,12 +4,12 @@ import scipy.interpolate as interpolate
 
 
 def emd(x, max_modes=5):
-    imfs = np.ndarray((max_modes, len(x)))
+    imfs = np.ndarray((max_modes+1, len(x)))
     n = 0
     N = max_modes
     residue = x
 
-    while n <= N - 1:
+    while n <= N:
         imf = sift_process(residue)
         imfs[n] = imf
         n += 1
@@ -25,14 +25,14 @@ def emd(x, max_modes=5):
 
 def sift_process(residue):
     mode = residue
-    max_siftings = 100
+    max_siftings = 50
     n_siftings = 0
 
     while n_siftings < max_siftings - 1:
         mode = sift_one(mode)
         extrema, zero_crossings, mean = analyze_mode(mode)
         n_siftings += 1
-        if abs(extrema - zero_crossings) <= 1 and -0.001 <= mean <= 0.001:
+        if abs(extrema - zero_crossings) <= 1 and -0.01 <= mean <= 0.01:
             break
 
     return mode
@@ -125,8 +125,8 @@ def get_end_point_from_linear_spline_of_two_extrema_near_boundary(x, extrema):
 
 def get_start_point_from_linear_spline_of_two_extrema_near_boundary(x, extrema):
     slope = (x[extrema[0]] - x[extrema[1]]) / (extrema[0] - extrema[1])
-    dt = extrema[1]
-    return slope * dt + x[extrema[1]]
+    dt = extrema[0]
+    return slope * dt + x[extrema[0]]
 
 
 def add_end_point_to_interpolation(x, interpolation_points, extrema, end_point, is_maxima):
@@ -145,23 +145,27 @@ def add_start_point_to_interpolation(x, interpolation_points, extrema, start_poi
 
 def add_end_point_as_maxima(x, interpolation_points, extrema, end_point):
     length_of_data = len(x)-1
+
     if end_point < x[length_of_data]:
         interpolation_points = np.append(interpolation_points, [x[length_of_data]])
         extrema = np.append(extrema, [length_of_data])
     else:
-        np.append(interpolation_points, [end_point])
-        np.append(extrema, [length_of_data])
+        interpolation_points = np.append(interpolation_points, [end_point])
+        extrema = np.append(extrema, [length_of_data])
+
     return interpolation_points, extrema
 
 
 def add_end_point_as_minima(x, interpolation_points, extrema, end_point):
     length_of_data = len(x)-1
+
     if end_point < x[length_of_data]:
         interpolation_points = np.append(interpolation_points, [end_point])
         extrema = np.append(extrema, [length_of_data])
     else:
         interpolation_points = np.append(interpolation_points, [x[length_of_data]])
         extrema = np.append(extrema, [length_of_data])
+
     return interpolation_points, extrema
 
 
@@ -172,6 +176,7 @@ def add_start_point_as_maxima(x, interpolation_points, extrema, start_point):
     else:
         interpolation_points = np.insert(interpolation_points, [0], [start_point])
         extrema = np.insert(extrema, [0], [0])
+
     return interpolation_points, extrema
 
 
@@ -182,4 +187,5 @@ def add_start_point_as_minima(x, interpolation_points, extrema, start_point):
     else:
         interpolation_points = np.insert(interpolation_points, [0], [x[0]])
         extrema = np.insert(extrema, [0], [0])
+
     return interpolation_points, extrema

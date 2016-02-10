@@ -1,3 +1,4 @@
+import utils
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,8 +43,9 @@ def plot_single_channel(sample_frequency, channel_data, plotter=plt, filename=st
 
 def plot_intrinsic_mode_functions(sample_frequency, imfs, channel=str, plotter=plt):
     n_rows = len(imfs)
+    data_length = len(imfs[0])
     f, axis = plotter.subplots(n_rows, 1, sharex=True, sharey=False)
-    time_axis = scipy.linspace(start=0, stop=n_rows / sample_frequency, num=n_rows)
+    time_axis = scipy.linspace(start=0, stop=data_length / sample_frequency, num=data_length)
     sup_title = "Channel " + channel
     f.suptitle(sup_title, fontsize=18)
 
@@ -60,9 +62,10 @@ def plot_intrinsic_mode_functions(sample_frequency, imfs, channel=str, plotter=p
 def plot_intrinsic_mode_functions_with_frequency_and_amplitude(sample_frequency, imfs, freq_array, amp_array,
                                                                channel=str, plotter=plt):
     n_rows = len(imfs)
+    data_length = len(imfs[0])
     sup_title = "Channel " + channel
     f, axis = plotter.subplots(n_rows, 2, sharex=False, sharey=False)
-    time_axis = scipy.linspace(start=0, stop=n_rows / sample_frequency, num=n_rows)
+    time_axis = scipy.linspace(start=0, stop=data_length / sample_frequency, num=data_length)
     f.suptitle(sup_title, fontsize=18)
 
     for i in range(0, n_rows):
@@ -81,8 +84,9 @@ def plot_intrinsic_mode_functions_with_frequency_and_amplitude(sample_frequency,
 
 def plot_original_signal_from_intrinsic_mode_functions(sample_frequency, imfs, residue, channel, plotter=plt):
     n_rows = len(imfs)
+    data_length = len(imfs[0])
     final_signal = scipy.zeros(len(imfs[1]))
-    time_axis = scipy.linspace(start=0, stop=n_rows / sample_frequency, num=n_rows)
+    time_axis = scipy.linspace(start=0, stop=data_length / sample_frequency, num=data_length)
 
     for i in range(n_rows):
         final_signal = scipy.add(final_signal, imfs[i + 1])
@@ -96,9 +100,9 @@ def plot_original_signal_from_intrinsic_mode_functions(sample_frequency, imfs, r
 
 
 def plot_hilbert_spectra_trisurf(sample_frequency, frequency, amplitude, plotter=plt, title=str):
-    n_rows = len(frequency)
+    data_length = len(frequency[0])
     fig = plt.figure()
-    time_axis = scipy.linspace(start=0, stop=n_rows / sample_frequency, num=n_rows)
+    time_axis = scipy.linspace(start=0, stop=data_length / sample_frequency, num=data_length)
     fig.suptitle(title)
     ax = fig.add_subplot(111, projection='3d')
     surf = ax.plot_trisurf(time_axis, frequency, amplitude, cmap=plotter.get_cmap('Spectral'), linewidth=1)
@@ -118,6 +122,77 @@ def plot_power_spectral_density(frequency, amplitude, plotter=plt, title=str):
     ax.set_xlabel('Frequency [Hz]')
     ylabel = 'Power Spectral Density [%sV^2]' % u'\u00b5'
     ax.set_ylabel(ylabel)
+    plotter.draw()
+
+
+# FUNCTION FOR PLOTTING THE HILBERT SPECTRA FOR IMFs
+def plot_hilbert_spectra(time, frequency, amplitude, title, plotter=plt, fs=100):
+
+    # Scale factor (to plot frequency with decimal precision)
+    scale_freq = 100
+    # Max scaled frequency
+    max_freq = int(0.5*scale_freq*fs)
+
+    # Creating time axis
+    time_ax = np.linspace(0, len(time)-1, len(time))
+    # Allocating memory for power and the rounded frequency
+    power_array = np.zeros(np.shape(frequency))
+    freq_rounded_array = np.zeros(np.shape(power_array), np.int)
+
+    # Create GRID based on time axis and maximum frequency
+    yi = np.linspace(0, max_freq, max_freq + 1)
+    Z = np.ones((max_freq + 1, len(time_ax)))*-200
+    X, Y = np.meshgrid(time_ax, yi)
+
+    # Enter loop if more than one IMF exists
+    if isinstance(frequency[0], np.ndarray):
+
+        for i in range(len(frequency)):
+
+            # Normalize the amplitude ( 0<=a<=1)
+            amplitude[i] = utils.normalize_data(amplitude[i])
+            # Power equal to amplitude squared
+            power_array[i] = np.multiply(amplitude[i], amplitude[i])
+            # Round the frequency to the nearest (results in OK resolution if scale_freq > 1, eg scale_freq=10)
+            freq_rounded_array[i] = np.ceil(frequency[i]*scale_freq)
+
+            # Compute the logarithmic power, and add it to the previous if the same inst. frequency exists.
+            for k in range(len(time_ax)):
+                if power_array[i, k] == 0.0:
+                        power_array[i, k] = 0.00000001
+                current_amplitude = Z[int(freq_rounded_array[i, k]), int(time_ax[k])]
+                if current_amplitude > -200:
+                    Z[int(freq_rounded_array[i, k]), int(time_ax[k])] = current_amplitude + 20.0*np.log10(power_array[i, k])
+                else:
+                    Z[int(freq_rounded_array[i, k]), int(time_ax[k])] = 20.0*np.log10(power_array[i, k])
+    else:
+
+        # Normalize the amplitude ( 0<=a<=1)
+        amplitude = utils.normalize_data(amplitude)
+        # Power equal to amplitude squared
+        power_array = np.multiply(amplitude, amplitude)
+        # Round the frequency to the nearest (results in OK resolution if scale_freq > 1, eg scale_freq=10)
+        freq_rounded_array = np.ceil(frequency*scale_freq)
+        # Compute the logarithmic power, and add it to the previous if the same inst. frequency exists.
+        for k in range(len(time_ax)):
+            Z[int(freq_rounded_array[k]), int(time_ax[k])] = 20.0*np.log10(power_array[k])
+
+    # Create figure and subplot.
+    # Set titles and labels.
+    fig = plotter.figure()
+    suptitle = 'Hilbert Spectra - Channel: ' + title
+    fig.suptitle(suptitle)
+    ax = plotter.subplot(111)
+    ax.set_xlabel('Time [s]')
+    ax.set_ylabel('Frequency [Hz]')
+
+    # Create contour plot og time, frequency and logarithmic power. Scale frequencies back to original values.
+    n_levels = 200
+    cax = ax.contourf(X, Y/scale_freq, Z, n_levels)
+    # Assign color bar to the contour plot
+    cb = fig.colorbar(cax)
+    # Set label and draw plot
+    cb.set_label('Amplitude [dB]')
     plotter.draw()
 
 

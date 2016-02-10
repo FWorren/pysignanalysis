@@ -59,8 +59,7 @@ def plot_intrinsic_mode_functions(sample_frequency, imfs, channel=str, plotter=p
     f.subplots_adjust(hspace=.5)
 
 
-def plot_intrinsic_mode_functions_with_frequency_and_amplitude(sample_frequency, imfs, freq_array, amp_array,
-                                                               channel=str, plotter=plt):
+def plot_intrinsic_mode_functions_with_frequency_and_amplitude(sample_frequency, imfs, frequencies, amplitudes, channel=str, plotter=plt):
     n_rows = len(imfs)
     data_length = len(imfs[0])
     sup_title = "Channel " + channel
@@ -73,12 +72,53 @@ def plot_intrinsic_mode_functions_with_frequency_and_amplitude(sample_frequency,
         axis[i][0].plot(time_axis, imfs[i])
         axis[i][0].set_title(title)
         axis[i][0].grid()
-        axis[i][1].plot(time_axis, freq_array[i])
+        axis[i][1].plot(frequencies[i], amplitudes[i])
         axis[i][1].set_ylabel('Amplitude')
         axis[i][1].grid()
 
     axis[n_rows - 1][0].set_xlabel('Time [s]')
     axis[n_rows - 1][1].set_xlabel('Frequency [Hz]')
+    f.subplots_adjust(hspace=.5)
+
+
+def plot_intrinsic_mode_functions_with_time_frequency_series(sample_frequency, imfs, frequencies, channel=str, plotter=plt):
+    n_rows = len(imfs)
+    data_length = len(imfs[0])
+    sup_title = "Channel " + channel
+    f, axis = plotter.subplots(n_rows, 2, sharex=False, sharey=False)
+    time_axis = scipy.linspace(start=0, stop=data_length / sample_frequency, num=data_length)
+    f.suptitle(sup_title, fontsize=18)
+
+    for i in range(0, n_rows):
+        title = 'IMF: ' + str(i+1)
+        axis[i][0].plot(time_axis, imfs[i])
+        axis[i][0].set_title(title)
+        axis[i][0].grid()
+        axis[i][1].plot(time_axis, frequencies[i])
+        axis[i][1].set_ylabel('Amplitude')
+        axis[i][1].grid()
+
+    axis[n_rows - 1][0].set_xlabel('Time [s]')
+    axis[n_rows - 1][1].set_xlabel('Frequency [Hz]')
+    f.subplots_adjust(hspace=.5)
+
+
+def plot_time_frequency_series(sample_frequency, frequencies, channel=str, plotter=plt):
+    n_rows = len(frequencies)
+    data_length = len(frequencies[0])
+    sup_title = "Channel " + channel
+    f, axis = plotter.subplots(n_rows, 1, sharex=False, sharey=False)
+    time_axis = scipy.linspace(start=0, stop=data_length / sample_frequency, num=data_length)
+    f.suptitle(sup_title, fontsize=18)
+
+    for i in range(0, n_rows):
+        title = 'IMF: ' + str(i+1)
+        axis[i].plot(time_axis, frequencies[i])
+        axis[i].set_title(title)
+        axis[i].grid()
+
+    axis[n_rows - 1].set_xlabel('Time [s]')
+    axis[n_rows - 1].set_xlabel('Frequency [Hz]')
     f.subplots_adjust(hspace=.5)
 
 

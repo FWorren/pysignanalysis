@@ -6,7 +6,7 @@ import ptsa.emd as emdlib
 import pysignanalysis.visualization as plotter
 
 if __name__ == '__main__':
-    max_modes = 5
+    max_modes = 4
     end_time = 1
     sample_freq = 2000
     a_0 = 100

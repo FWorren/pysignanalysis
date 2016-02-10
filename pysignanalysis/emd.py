@@ -6,20 +6,20 @@ import scipy.interpolate as interpolate
 def emd(x, max_modes=5):
     imfs = np.ndarray((max_modes+1, len(x)))
     n = 0
-    N = max_modes
     residue = x
 
-    while n <= N:
+    while n < max_modes:
         imf = sift_process(residue)
         imfs[n] = imf
-        n += 1
         residue = residue - imf
+        n += 1
         # if n >= 2:
         #     std = get_imf_std_deviation(imfs[n-2], imfs[n-1])
         #     print "STD = ", std
         #     if 0.2 <= std <= 0.3:
         #         break
 
+    imfs[-1] = residue
     return imfs
 
 
@@ -28,13 +28,13 @@ def sift_process(residue):
     max_siftings = 50
     n_siftings = 0
 
-    while n_siftings < max_siftings - 1:
+    while n_siftings < max_siftings:
         mode = sift_one(mode)
         extrema, zero_crossings, mean = analyze_mode(mode)
         n_siftings += 1
         if abs(extrema - zero_crossings) <= 1 and -0.01 <= mean <= 0.01:
             break
-    print(n_siftings)
+
     return mode
 
 

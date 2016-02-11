@@ -3,13 +3,13 @@ import scipy.signal as signal
 import scipy.interpolate as interpolate
 
 
-def emd(x, max_modes=10):
+def emd(x, max_modes=10, max_siftings=200):
     imfs = np.ndarray((max_modes+1, len(x)))
     n = 0
     residue = x
 
     while n < max_modes:
-        imf = sift_process(residue)
+        imf = sift_process(residue, max_siftings)
         imfs[n] = imf
         residue = residue - imf
         n += 1
@@ -23,9 +23,8 @@ def emd(x, max_modes=10):
     return imfs
 
 
-def sift_process(residue):
+def sift_process(residue, max_siftings):
     mode = residue
-    max_siftings = 200
     n_siftings = 0
 
     while n_siftings < max_siftings:

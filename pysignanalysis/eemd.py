@@ -1,42 +1,38 @@
 import emd
 import time
 import numpy as np
-from multiprocessing import Process, Pool
+from multiprocessing import Process, Queue
 
 
 def eemd(x, sample_frequency, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process):
     processes = []
-    pool = Pool(processes=ensembles_per_process)
+    output = Queue(ensembles_per_process)
     start_overal = time.time()
 
     for i in range(ensembles/ensembles_per_process):
         emd_process = EnsembleProcess(sample_frequency, x, max_modes, max_siftings, noise_std, ensembles_per_process)
         emd_process.name = "Thread " + str(i+1)
         emd_process.start()
-        pool.apply_async(emd_process)
+        output.put(emd_process)
         processes.append(emd_process)
 
     print "Process all processes total time: ", time.time() - start_overal
 
     imfs = np.ndarray((max_modes+1, len(x)))
 
-    for process in processes:
-        process.join()
-        print(process.get_imfs())
-        imfs = np.add(imfs, process.get_imfs())
-        # print "Process time process ", process.name, ": ", process.get_thread_process_time()
+    results = [output.get() for p in processes]
 
     for j in range(max_modes + 1):
-        imfs[j] = np.multiply(imfs[j], 1.0/float(ensembles))
+        imfs[j] = np.multiply(results[j], 1.0/float(ensembles))
 
     return imfs
 
 
-def eemd_without_threading(x, sample_frequency, noise_std, max_modes, max_siftings, ensembles):
+def eemd_without_threading(x, noise_std, max_modes, max_siftings, ensembles):
     imfs = np.ndarray((max_modes+1, len(x)))
 
     for i in range(ensembles):
-        noise = np.random.randn(sample_frequency)*noise_std
+        noise = np.random.randn(len(x))*noise_std
         x = x + noise
         imfs = emd.emd(x, max_modes, max_siftings)
         imfs = np.add(imfs, imfs)
@@ -45,6 +41,10 @@ def eemd_without_threading(x, sample_frequency, noise_std, max_modes, max_siftin
         imfs[j] = np.multiply(imfs[j], 1.0/float(ensembles))
 
     return imfs
+
+
+def ensemble_emd(sample_frequency, x, max_modes, max_siftings, noise_std, ensembles_per_process, output):
+    return 0
 
 
 class EnsembleProcess(Process):
@@ -67,3 +67,4 @@ class EnsembleProcess(Process):
             x = self.x + noise
             imfs = emd.emd(x, self.max_modes, self.max_siftings)
             self.imfs = np.add(self.imfs, imfs)
+

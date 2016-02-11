@@ -4,13 +4,11 @@ import numpy as np
 from threading import Thread
 
 
-def eemd(x, sample_frequency, noise_std, max_modes, ensembles):
+def eemd(x, sample_frequency, noise_std, max_modes, ensembles, ensembles_per_thread):
     threads = []
     start_overal = time.time()
-    for i in range(ensembles):
-        noise = np.random.randn(sample_frequency)*noise_std
-        x = x + noise
-        emd_task = Emd(x, max_modes)
+    for i in range(ensembles/ensembles_per_thread):
+        emd_task = Emd(sample_frequency, x, max_modes, noise_std, ensembles_per_thread)
         emd_task.setName("Thread " + str(i+1))
         emd_task.start()
         threads.append(emd_task)
@@ -31,14 +29,21 @@ def eemd(x, sample_frequency, noise_std, max_modes, ensembles):
 
 
 class Emd(Thread):
-    def __init__(self, x, max_modes):
+    def __init__(self, sample_frequency, x, max_modes, noise_std, ensembles_per_thread):
         super(Emd, self).__init__()
         self.imfs = np.ndarray((max_modes+1, len(x)))
+        self.sample_frequency = sample_frequency
         self.x = x
         self.max_modes = max_modes
+        self.noise_std = noise_std
+        self.ensembles_per_thread = ensembles_per_thread
 
     def get_imfs(self):
         return self.imfs
 
     def run(self):
-        self.imfs = emd.emd(self.x, self.max_modes)
+        for i in range(self.ensembles_per_thread):
+            noise = np.random.randn(self.sample_frequency)*self.noise_std
+            x = self.x + noise
+            imfs = emd.emd(x, self.max_modes)
+            self.imfs = np.add(self.imfs, imfs)

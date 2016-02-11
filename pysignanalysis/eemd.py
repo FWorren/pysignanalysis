@@ -1,26 +1,30 @@
 import emd
 import time
 import numpy as np
-from threading import Thread
+from multiprocessing import Process, Pool
 
 
-def eemd(x, sample_frequency, noise_std, max_modes, max_siftings, ensembles, ensembles_per_thread):
-    threads = []
+def eemd(x, sample_frequency, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process):
+    processes = []
+    pool = Pool(processes=ensembles_per_process)
     start_overal = time.time()
 
-    for i in range(ensembles/ensembles_per_thread):
-        emd_task = Emd(sample_frequency, x, max_modes, max_siftings, noise_std, ensembles_per_thread)
-        emd_task.setName("Thread " + str(i+1))
-        emd_task.start()
-        threads.append(emd_task)
+    for i in range(ensembles/ensembles_per_process):
+        emd_process = EnsembleProcess(sample_frequency, x, max_modes, max_siftings, noise_std, ensembles_per_process)
+        emd_process.name = "Thread " + str(i+1)
+        emd_process.start()
+        pool.apply_async(emd_process)
+        processes.append(emd_process)
 
-    print "Process time all threads: ", time.time() - start_overal
+    print "Process all processes total time: ", time.time() - start_overal
 
     imfs = np.ndarray((max_modes+1, len(x)))
 
-    for thread in threads:
-        thread.join()
-        imfs = np.add(imfs, thread.get_imfs())
+    for process in processes:
+        process.join()
+        print(process.get_imfs())
+        imfs = np.add(imfs, process.get_imfs())
+        # print "Process time process ", process.name, ": ", process.get_thread_process_time()
 
     for j in range(max_modes + 1):
         imfs[j] = np.multiply(imfs[j], 1.0/float(ensembles))
@@ -28,22 +32,37 @@ def eemd(x, sample_frequency, noise_std, max_modes, max_siftings, ensembles, ens
     return imfs
 
 
-class Emd(Thread):
-    def __init__(self, sample_frequency, x, max_modes, max_siftings, noise_std, ensembles_per_thread):
-        super(Emd, self).__init__()
+def eemd_without_threading(x, sample_frequency, noise_std, max_modes, max_siftings, ensembles):
+    imfs = np.ndarray((max_modes+1, len(x)))
+
+    for i in range(ensembles):
+        noise = np.random.randn(sample_frequency)*noise_std
+        x = x + noise
+        imfs = emd.emd(x, max_modes, max_siftings)
+        imfs = np.add(imfs, imfs)
+
+    for j in range(max_modes + 1):
+        imfs[j] = np.multiply(imfs[j], 1.0/float(ensembles))
+
+    return imfs
+
+
+class EnsembleProcess(Process):
+    def __init__(self, sample_frequency, x, max_modes, max_siftings, noise_std, ensembles_per_process):
+        super(EnsembleProcess, self).__init__()
         self.imfs = np.ndarray((max_modes+1, len(x)))
         self.sample_frequency = sample_frequency
         self.x = x
         self.max_modes = max_modes
         self.max_siftings = max_siftings
         self.noise_std = noise_std
-        self.ensembles_per_thread = ensembles_per_thread
+        self.ensembles_per_process = ensembles_per_process
 
     def get_imfs(self):
         return self.imfs
 
     def run(self):
-        for i in range(self.ensembles_per_thread):
+        for i in range(self.ensembles_per_process):
             noise = np.random.randn(self.sample_frequency)*self.noise_std
             x = self.x + noise
             imfs = emd.emd(x, self.max_modes, self.max_siftings)

@@ -9,18 +9,19 @@ import ptsa.emd as emdlib
 
 
 if __name__ == '__main__':
-    max_modes = 5
+    max_modes = 6
     ensembles = 50
-    ensembles_per_thread = 5
+    ensembles_per_process = 5
     max_siftings = 200
     end_time = 1
     sample_freq = 1000
     noise_std = 0.2
+
     a_0 = 70
     a_1 = 30
     a_2 = 50
     a_3 = 10
-    omega_0 = 40.0 * 2.0 * np.pi
+    omega_0 = 50.0 * 2.0 * np.pi
     omega_1 = 30.0 * 2.0 * np.pi
     omega_2 = 60.0 * 2.0 * np.pi
     omega_3 = 10.0 * 2.0 * np.pi
@@ -31,20 +32,31 @@ if __name__ == '__main__':
                 a_3 * np.sin(omega_3 * time_ax)
 
     start = time.time()
-    imfs = eemddev.eemd(sine_wave, sample_freq, noise_std, max_modes, max_siftings, ensembles, ensembles_per_thread)
+    imfs_eemd = eemddev.eemd(sine_wave, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process)
     # imfs_emd = emddev.emd(sine_wave, max_modes, max_siftings)
     print "Process time developed: ", time.time() - start
-    #start = time.time()
-    #imfs_2 = emdlib.eemd(sine_wave, noise_std, ensembles, max_siftings)
-    #print "Process time lib: ", time.time() - start
+
+    # start = time.time()
+    # imfs_2 = emdlib.eemd(sine_wave, noise_std, ensembles, max_siftings)
+    # print "Process time lib: ", time.time() - start
+
     # start = time.time()
     # imfs = eemddev.eemd_without_threading(sine_wave, sample_freq, noise_std, max_modes, max_siftings, ensembles)
     # print "Process time developed: ", time.time() - start
-    # print(np.shape(imfs))
+
     # frequencies, amplitudes = hht.hht(sample_freq, imfs)
-    plotter.plot_intrinsic_mode_functions(sample_freq, imfs, 'Developed EEMD', plt)
+
+    # noise = np.random.randn(len(sine_wave))*noise_std
+    # data = np.add(sine_wave, noise)
+    # plotter.plot_single_channel(sample_freq, data, plt, "Test")
+
+    plotter.plot_intrinsic_mode_functions(sample_freq, imfs_eemd, 'Developed EEMD', plt)
+
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_emd, 'Developed EMD', plt)
+
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_2, 'Lib EMD', plt)
+
     # plotter.plot_time_frequency_series(sample_freq, frequencies, "Test", plt)
+
     # plotter.plot_hilbert_spectra(time_ax, frequencies, amplitudes, "test", plt, sample_freq)
-    plt.show()
+    plt.show(block=True)

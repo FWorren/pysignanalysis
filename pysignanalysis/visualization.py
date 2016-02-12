@@ -54,6 +54,7 @@ def plot_intrinsic_mode_functions(sample_frequency, imfs, channel=str, plotter=p
         axis[i].plot(time_axis, imfs[i])
         axis[i].set_title(title)
         axis[i].grid()
+        axis[i].set_ylim([-200, 200])
 
     axis[n_rows-1].set_xlabel('Time [s]')
     f.subplots_adjust(hspace=.5)

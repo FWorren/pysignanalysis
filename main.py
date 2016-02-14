@@ -5,19 +5,19 @@ import pysignanalysis.emd as emddev
 import pysignanalysis.eemd as eemddev
 import pysignanalysis.visualization as plotter
 import pysignanalysis.hht as hht
-import ptsa.emd as emdlib
+# import ptsa.emd as emdlib
 
 
 if __name__ == '__main__':
     max_modes = 6
-    ensembles = 50
-    ensembles_per_process = 5
+    ensembles = 3
+    ensembles_per_process = 1
     max_siftings = 200
     end_time = 1
     sample_freq = 1000
     noise_std = 0.2
 
-    a_0 = 70
+    a_0 = 40
     a_1 = 30
     a_2 = 50
     a_3 = 10
@@ -32,8 +32,27 @@ if __name__ == '__main__':
                 a_3 * np.sin(omega_3 * time_ax)
 
     start = time.time()
+    data_length = len(sine_wave)
+
     imfs_eemd = eemddev.eemd(sine_wave, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process)
-    # imfs_emd = emddev.emd(sine_wave, max_modes, max_siftings)
+    #imfs_eemd = eemddev.ensemble_process_test(sine_wave, max_modes, max_siftings, noise_std, ensembles)
+
+    # noise = np.multiply(np.random.randn(data_length), noise_std)
+    # noise_assisted_data = sine_wave + noise
+    # imfs_emd = emddev.emd(noise_assisted_data, max_modes, max_siftings)
+    # noise = np.multiply(np.random.randn(data_length), noise_std)
+    # noise_assisted_data = sine_wave + noise
+    # imfs_emd2 = emddev.emd(noise_assisted_data, max_modes, max_siftings)
+    # noise = np.multiply(np.random.randn(data_length), noise_std)
+    # noise_assisted_data = sine_wave + noise
+    # imfs_emd3 = emddev.emd(noise_assisted_data, max_modes, max_siftings)
+    # noise = np.multiply(np.random.randn(data_length), noise_std)
+    # noise_assisted_data = sine_wave + noise
+    # imfs_emd4 = emddev.emd(noise_assisted_data, max_modes, max_siftings)
+    # imfs1 = np.add(imfs_emd, imfs_emd2)
+    # imfs2 = np.add(imfs_emd3, imfs_emd4)
+    # imfs = np.add(imfs1, imfs2)
+    # imfs = np.multiply(imfs, 1/float(4))
     print "Process time developed: ", time.time() - start
 
     # start = time.time()
@@ -51,6 +70,8 @@ if __name__ == '__main__':
     # plotter.plot_single_channel(sample_freq, data, plt, "Test")
 
     plotter.plot_intrinsic_mode_functions(sample_freq, imfs_eemd, 'Developed EEMD', plt)
+
+    # plotter.plot_intrinsic_mode_functions(sample_freq, imfs, 'Developed EEMD', plt)
 
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_emd, 'Developed EMD', plt)
 

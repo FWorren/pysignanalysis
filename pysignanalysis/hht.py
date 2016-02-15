@@ -13,7 +13,7 @@ def hht(sample_frequency, imfs):
         phase[i, :] = np.angle(h)
         frequencies[i, :] = np.r_[
             0.0,
-            0.5*(np.angle(-h[2:]*np.conj(h[0:-2]))+np.pi)/(2*np.pi) * sample_frequency,
+            0.5*(np.angle(-h[2:]*np.conj(h[0:-2]))+np.pi)/(2.0*np.pi) * np.float32(sample_frequency),
             0.0
         ]
 

@@ -237,3 +237,7 @@ def plot_hilbert_spectra(time, frequency, amplitude, title, plotter=plt, fs=100)
     plotter.draw()
 
 
+def plot_scalp_spectra():
+    return 0
+
+

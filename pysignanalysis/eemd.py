@@ -6,6 +6,7 @@ from multiprocessing import Process, Queue
 def eemd(x, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process):
     n_processes = ensembles / ensembles_per_process
     data_length = len(x)
+    noise_std *= np.max(x)
     output = Queue(n_processes)
 
     processes = [

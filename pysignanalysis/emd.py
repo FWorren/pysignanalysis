@@ -15,7 +15,6 @@ def emd(x, max_modes=10, max_siftings=200):
         n += 1
         # if n >= 2:
         #     std = get_imf_std_deviation(imfs[n-2], imfs[n-1])
-        #     print "STD = ", std
         #     if 0.2 <= std <= 0.3:
         #         break
 

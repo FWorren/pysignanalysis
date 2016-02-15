@@ -38,16 +38,15 @@ def ensemble_all_processes(data_length, results, n_processes, ensembles, max_mod
     imfs = np.zeros((max_modes + 1, data_length))
 
     for j in range(n_processes):
-        ensemble = np.array(results[j])
-        imfs = np.add(imfs, ensemble)
+        imfs = np.add(imfs, results[j])
 
-    imfs = np.multiply(imfs, 1.0/np.float(ensembles))
+    imfs = np.multiply(imfs, 1.0/float(ensembles))
 
     return imfs
 
 
 def ensemble_process(x, data_length, max_modes, max_siftings, noise_std, ensembles_per_process, output):
-    imfs = np.ndarray((max_modes + 1, data_length))
+    imfs = np.zeros((max_modes + 1, data_length))
 
     for i in range(ensembles_per_process):
         noise = np.multiply(np.random.randn(data_length), noise_std)

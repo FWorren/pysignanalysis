@@ -35,11 +35,11 @@ if __name__ == '__main__':
     start = time.time()
     imfs_eemd = eemddev.eemd(sine_wave, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process)
 
-    print "Process time developed: ", time.time() - start
+    print "Process time EEMD: ", time.time() - start
 
     start = time.time()
     imfs_emd = emddev.emd(sine_wave, max_modes, max_siftings)
-    print "Process time lib: ", time.time() - start
+    print "Process time EMD: ", time.time() - start
 
     # start = time.time()
     # imfs = eemddev.eemd_without_threading(sine_wave, sample_freq, noise_std, max_modes, max_siftings, ensembles)
@@ -48,17 +48,17 @@ if __name__ == '__main__':
     # noise = np.random.randn(len(sine_wave))*noise_std
     # data = np.add(sine_wave, noise)
     # plotter.plot_single_channel(sample_freq, data, plt, "Test")
-
+    print(imfs_eemd[0])
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_eemd, 'Developed EEMD', plt)
     #
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_emd, 'Developed EMD', plt)
 
     frequencies_eemd, amplitudes_eemd = hht.hht(sample_freq, imfs_eemd)
-    frequencies_emd, amplitudes_emd = hht.hht(sample_freq, imfs_emd)
+    #frequencies_emd, amplitudes_emd = hht.hht(sample_freq, imfs_emd)
 
     plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_eemd, frequencies_eemd, 'EEMD', plt)
 
-    plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_emd, frequencies_emd, 'EMD', plt)
+    #plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_emd, frequencies_emd, 'EMD', plt)
 
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_2, 'Lib EMD', plt)
 

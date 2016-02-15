@@ -14,8 +14,9 @@ def emd(x, max_modes=10, max_siftings=200):
         residue = np.subtract(residue, imf)
         n += 1
         # if n >= 2:
-        #     std = get_imf_std_deviation(imfs[n-2], imfs[n-1])
-        #     if 0.2 <= std <= 0.3:
+        #     sd = get_sum_of_the_differences(imfs[n-2], imfs[n-1])
+        #     print(sd)
+        #     if 0.2 <= sd <= 0.3:
         #         break
 
     imfs[-1] = residue
@@ -71,9 +72,14 @@ def find_number_of_zero_crossings(x):
     return crossings
 
 
-def get_imf_std_deviation(imf_old, imf_new):
-    abs_diff = np.abs(np.subtract(imf_old, imf_new))
-    return np.std(abs_diff)
+def get_sum_of_the_differences(imf_old, imf_new):
+    imf_length = len(imf_old)
+    sd = 0
+
+    for i in range(imf_length):
+        sd += ((abs(imf_old[i]-imf_new[i]))**2)/(imf_old[i]**2)
+
+    return sd
 
 
 def interpolate_maxima(x, maxima):

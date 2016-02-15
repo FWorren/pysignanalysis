@@ -35,6 +35,24 @@ def eemd(x, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process
     return imfs
 
 
+def init_procesess(x, noise_std, max_modes, max_siftings, n_processes, data_length, ensembles_per_process):
+    processes = [
+        Process(
+            target=ensemble_process,
+            args=(
+                x,
+                data_length,
+                max_modes,
+                max_siftings,
+                noise_std,
+                ensembles_per_process,
+                output
+            )
+        )
+        for p in range(n_processes)
+    ]
+    return processes
+
 def ensemble_all_processes(data_length, results, n_processes, ensembles, max_modes):
     imfs = np.zeros((max_modes + 1, data_length))
 

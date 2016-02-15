@@ -54,11 +54,11 @@ if __name__ == '__main__':
     #
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_emd, 'Developed EMD', plt)
 
-    #frequencies_eemd, amplitudes_eemd = hht.hht(sample_freq, imfs_eemd)
+    # frequencies_eemd, amplitudes_eemd = hht.hht(sample_freq, imfs_eemd)
 
     frequencies_emd, amplitudes_emd = hht.hht(sample_freq, imfs_emd)
 
-    #plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_eemd, frequencies_eemd, 'EEMD', plt)
+    # plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_eemd, frequencies_eemd, 'EEMD', plt)
 
     plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_emd, frequencies_emd, 'EMD', plt)
 
@@ -66,5 +66,5 @@ if __name__ == '__main__':
 
     # plotter.plot_time_frequency_series(sample_freq, frequencies, "Test", plt)
 
-    plotter.plot_hilbert_spectra(time_ax, frequencies_emd, amplitudes_emd, "test", plt, sample_freq)
+    # plotter.plot_hilbert_spectra(time_ax, frequencies_emd, amplitudes_emd, "test", plt, sample_freq)
     plt.show(block=True)

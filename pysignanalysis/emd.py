@@ -4,14 +4,14 @@ import scipy.interpolate as interpolate
 
 
 def emd(x, max_modes=10, max_siftings=200):
-    imfs = np.ndarray((max_modes+1, len(x)))
+    imfs = np.zeros((max_modes+1, len(x)))
     n = 0
     residue = x
 
     while n < max_modes:
         imf = sift_process(residue, max_siftings)
         imfs[n] = imf
-        residue = residue - imf
+        residue = np.subtract(residue, imf)
         n += 1
         # if n >= 2:
         #     std = get_imf_std_deviation(imfs[n-2], imfs[n-1])

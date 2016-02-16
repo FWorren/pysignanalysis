@@ -16,5 +16,12 @@ def hht(sample_frequency, imfs):
             0.5*(np.angle(-h[2:]*np.conj(h[0:-2]))+np.pi)/(2.0*np.pi) * np.float32(sample_frequency),
             0.0
         ]
+        max_freq = 100
+        for k in range(len(frequencies[i])):
+            if frequencies[i, k] > max_freq:
+                if k > 0:
+                    frequencies[i, k] = frequencies[i, k-1]
+                else:
+                    frequencies[i, k] = max_freq
 
     return frequencies, amplitudes

@@ -2,7 +2,7 @@ import numpy as np
 import scipy.signal as signal
 
 
-def hht(sample_frequency, imfs):
+def hilbert_transform(sample_frequency, imfs):
     amplitudes = np.zeros(imfs.shape, np.float32)
     phase = np.zeros(imfs.shape, np.float32)
     frequencies = np.zeros(imfs.shape, np.float32)

@@ -170,7 +170,7 @@ def plot_power_spectral_density(frequency, amplitude, plotter=plt, title=str):
 def plot_hilbert_spectra(time, frequency, amplitude, title, plotter=plt, fs=100):
 
     # Scale factor (to plot frequency with decimal precision)
-    scale_freq = 100
+    scale_freq = 10
     # Max scaled frequency
     max_freq = int(0.5*scale_freq*fs)
 
@@ -187,27 +187,26 @@ def plot_hilbert_spectra(time, frequency, amplitude, title, plotter=plt, fs=100)
 
     # Enter loop if more than one IMF exists
     if isinstance(frequency[0], np.ndarray):
-
-        for i in range(len(frequency)):
-
+        n_inst_frequencies = len(frequency)
+        for i in range(n_inst_frequencies):
             # Normalize the amplitude ( 0<=a<=1)
             amplitude[i] = utils.normalize_data(amplitude[i])
             # Power equal to amplitude squared
             power_array[i] = np.multiply(amplitude[i], amplitude[i])
             # Round the frequency to the nearest (results in OK resolution if scale_freq > 1, eg scale_freq=10)
             freq_rounded_array[i] = np.ceil(frequency[i]*scale_freq)
-
             # Compute the logarithmic power, and add it to the previous if the same inst. frequency exists.
             for k in range(len(time_ax)):
                 if power_array[i, k] == 0.0:
-                        power_array[i, k] = 0.00000001
+                    power_array[i, k] = 0.00000001
+
                 current_amplitude = Z[int(freq_rounded_array[i, k]), int(time_ax[k])]
+
                 if current_amplitude > -200:
                     Z[int(freq_rounded_array[i, k]), int(time_ax[k])] = current_amplitude + 20.0*np.log10(power_array[i, k])
                 else:
                     Z[int(freq_rounded_array[i, k]), int(time_ax[k])] = 20.0*np.log10(power_array[i, k])
     else:
-
         # Normalize the amplitude ( 0<=a<=1)
         amplitude = utils.normalize_data(amplitude)
         # Power equal to amplitude squared
@@ -227,7 +226,7 @@ def plot_hilbert_spectra(time, frequency, amplitude, title, plotter=plt, fs=100)
     ax.set_xlabel('Time [s]')
     ax.set_ylabel('Frequency [Hz]')
 
-    # Create contour plot og time, frequency and logarithmic power. Scale frequencies back to original values.
+    # Create contour plot and time, frequency and logarithmic power. Scale frequencies back to original values.
     n_levels = 200
     cax = ax.contourf(X, Y/scale_freq, Z, n_levels)
     # Assign color bar to the contour plot

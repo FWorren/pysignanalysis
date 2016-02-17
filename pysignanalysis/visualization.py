@@ -96,11 +96,11 @@ def plot_intrinsic_mode_functions_with_time_frequency_series(sample_frequency, i
         axis[i][0].set_title(title)
         axis[i][0].grid()
         axis[i][1].plot(time_axis, frequencies[i])
-        axis[i][1].set_ylabel('Amplitude')
+        axis[i][1].set_ylabel('Frequency [Hz]')
         axis[i][1].grid()
 
     axis[n_rows - 1][0].set_xlabel('Time [s]')
-    axis[n_rows - 1][1].set_xlabel('Frequency [Hz]')
+    axis[n_rows - 1][1].set_xlabel('Time [s]')
     f.subplots_adjust(hspace=.5)
 
 
@@ -118,8 +118,8 @@ def plot_time_frequency_series(sample_frequency, frequencies, channel=str, plott
         axis[i].set_title(title)
         axis[i].grid()
 
-    axis[n_rows - 1].set_xlabel('Time [s]')
     axis[n_rows - 1].set_xlabel('Frequency [Hz]')
+    axis[n_rows - 1].set_xlabel('Time [s]')
     f.subplots_adjust(hspace=.5)
 
 

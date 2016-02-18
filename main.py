@@ -41,9 +41,9 @@ if __name__ == '__main__':
     data_length = len(sine_wave)
     # sine_wave = utils.normalize_data(sine_wave)
 
-    start = time.time()
-    imfs_eemd = eemddev.eemd(mode_mixing_signal, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process)
-    print "Process time EEMD: ", time.time() - start
+    # start = time.time()
+    # imfs_eemd = eemddev.eemd(mode_mixing_signal, noise_std, max_modes, max_siftings, ensembles, ensembles_per_process)
+    # print "Process time EEMD: ", time.time() - start
 
     start = time.time()
     imfs_emd = emddev.emd(mode_mixing_signal, max_modes, max_siftings)
@@ -61,11 +61,11 @@ if __name__ == '__main__':
     #
     # plotter.plot_intrinsic_mode_functions(sample_freq, imfs_emd, 'Developed EMD', plt)
 
-    frequencies_eemd, amplitudes_eemd = hht.hilbert_transform(sample_freq, imfs_eemd)
-
+    # frequencies_eemd, amplitudes_eemd = hht.hilbert_transform(sample_freq, imfs_eemd)
+    #
     frequencies_emd, amplitudes_emd = hht.hilbert_transform(sample_freq, imfs_emd)
 
-    plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_eemd, frequencies_eemd, 'EEMD', plt)
+    #plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_eemd, frequencies_eemd, 'EEMD', plt)
 
     plotter.plot_intrinsic_mode_functions_with_time_frequency_series(sample_freq, imfs_emd, frequencies_emd, 'EMD', plt)
 
@@ -73,5 +73,5 @@ if __name__ == '__main__':
 
     # plotter.plot_time_frequency_series(sample_freq, frequencies, "Test", plt)
 
-    plotter.plot_hilbert_spectra(time_ax, frequencies_emd[0:3], amplitudes_emd[0:3], "test", plt, sample_freq)
+    # plotter.plot_hilbert_spectra(time_ax, frequencies_emd[0:3], amplitudes_emd[0:3], "test", plt, sample_freq)
     plt.show(block=True)

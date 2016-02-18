@@ -31,9 +31,16 @@ def sift_process(residue, max_siftings):
         mode = sift_one(mode)
         extrema, zero_crossings, mean = analyze_mode(mode)
         n_siftings += 1
-        if abs(extrema - zero_crossings) <= 1 and -0.01 <= mean <= 0.01:
+        if abs(extrema - zero_crossings) <= 1 and -0.001 <= mean <= 0.001:
             break
+    N = 5
+    n_siftings_check = 0
 
+    while n_siftings_check < N:
+        mode = sift_one(mode)
+        n_siftings_check += 1
+
+    print(n_siftings)
     return mode
 
 

@@ -25,3 +25,22 @@ def hilbert_transform(sample_frequency, imfs):
                     frequencies[i, k] = max_freq
 
     return frequencies, amplitudes
+
+
+def hht(sample_frequency, imfs):
+    n_imfs = len(imfs)
+    amplitudes = np.zeros(imfs.shape, np.float32)
+    phase = np.zeros(imfs.shape, np.float32)
+    frequencies = np.zeros(imfs.shape, np.float32)
+
+    for i in range(n_imfs):
+        fft = np.fft.fft(imfs[i])
+        amplitudes[i][:] = np.abs(fft)
+        phase[i][:] = np.angle(fft)
+        frequencies[i][:] = np.r_[
+            0.0,
+            0.5*(np.angle(-fft[2:]*np.conj(fft[0:-2]))+np.pi)/(2.0*np.pi) * np.float32(sample_frequency),
+            0.0
+        ]
+
+    return frequencies, amplitudes

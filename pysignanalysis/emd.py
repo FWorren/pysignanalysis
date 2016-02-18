@@ -40,7 +40,6 @@ def sift_process(residue, max_siftings):
         mode = sift_one(mode)
         n_siftings_check += 1
 
-    print(n_siftings)
     return mode
 
 

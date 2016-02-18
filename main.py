@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # print "Process time EEMD: ", time.time() - start
 
     start = time.time()
-    imfs_emd = emddev.emd(mode_mixing_signal, max_modes, max_siftings)
+    imfs_emd = emddev.emd(sine_wave, max_modes, max_siftings)
     print "Process time EMD: ", time.time() - start
 
     # start = time.time()
